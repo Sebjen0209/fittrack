@@ -1,0 +1,60 @@
+services:
+  user-service:
+    build: ./services/user-service
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_CONN=postgres://fittrack:fittrack@postgres-users:5432/users?sslmode=disable
+    depends_on:
+      postgres-users:
+        condition: service_healthy
+    networks:
+      - fittrack-network
+
+  workout-service:
+    build: ./services/workout-service
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_CONN=postgres://fittrack:fittrack@postgres-workouts:5432/workouts?sslmode=disable
+    depends_on:
+      postgres-workouts:
+        condition: service_healthy
+    networks:
+      - fittrack-network
+
+  postgres-users:
+    image: postgres
+    environment:
+      POSTGRES_USER: fittrack
+      POSTGRES_PASSWORD: fittrack
+      POSTGRES_DB: users
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fittrack -d users"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fittrack-network
+
+  postgres-workouts:
+    image: postgres
+    environment:
+      POSTGRES_USER: fittrack
+      POSTGRES_PASSWORD: fittrack
+      POSTGRES_DB: workouts
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fittrack -d workouts"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fittrack-network
+
+networks:
+  fittrack-network:
+    driver: bridge
