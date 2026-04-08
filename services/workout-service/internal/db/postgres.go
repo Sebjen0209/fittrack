@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/lib/pq"
 	"github.com/holmsted/fittrack/workout-service/internal/types"
+	_ "github.com/lib/pq"
 )
 
 type PostgresStore struct {
@@ -150,6 +150,7 @@ func (s *PostgresStore) DeleteWorkout(id string) error {
 	return nil
 }
 
+// sometihng
 func (s *PostgresStore) getExercises(workoutID string) ([]types.Exercise, error) {
 	rows, err := s.db.Query(
 		`SELECT id, workout_id, name FROM exercises WHERE workout_id = $1`, workoutID,
