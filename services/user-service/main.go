@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	connectionString := "postgres://fittrack:fittrack@localhost:5432/users?sslmode=disable"
+	connectionString := "postgres://fittrack:fittrack@postgres-users:5432/users?sslmode=disable"
 	store, err := db.NewPostgresStore(connectionString)
 
 	if err != nil {

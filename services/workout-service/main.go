@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	connStr := "postgres://fittrack:fittrack@localhost:5433/workouts?sslmode=disable"
+	connStr := "postgres://fittrack:fittrack@postgres-workouts:5432/workouts?sslmode=disable"
 	store, err := db.NewPostgresStore(connStr)
 	if err != nil {
 		log.Fatal(err)
