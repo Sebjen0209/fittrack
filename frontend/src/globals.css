@@ -1,0 +1,644 @@
+/* ================================================================
+   FITTRACK — ATHLETIC DESIGN SYSTEM
+   ================================================================ */
+
+:root {
+  --bg:          #0d0d0d;
+  --surface:     #171717;
+  --card:        #1e1e1e;
+  --card-hover:  #252525;
+  --card-border: rgba(255,255,255,0.07);
+
+  --orange:       #FF4500;
+  --orange-light: #FF6B35;
+  --orange-dim:   rgba(255,69,0,0.12);
+  --orange-glow:  0 0 24px rgba(255,69,0,0.5), 0 0 60px rgba(255,69,0,0.2);
+
+  --gold:       #FFB800;
+  --gold-dim:   rgba(255,184,0,0.12);
+  --gold-glow:  0 0 20px rgba(255,184,0,0.5);
+
+  --green:      #10D48E;
+  --green-dim:  rgba(16,212,142,0.12);
+  --green-glow: 0 0 20px rgba(16,212,142,0.4);
+
+  --blue:       #0A84FF;
+  --blue-dim:   rgba(10,132,255,0.12);
+
+  --red:        #FF2D55;
+  --red-dim:    rgba(255,45,85,0.12);
+
+  --purple:     #BF5AF2;
+  --purple-dim: rgba(191,90,242,0.12);
+
+  --text:       #FFFFFF;
+  --text-dim:   rgba(255,255,255,0.6);
+  --text-faint: rgba(255,255,255,0.28);
+
+  --font-display: 'Bebas Neue', 'Impact', sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+
+  --radius:    12px;
+  --radius-sm: 6px;
+  --radius-lg: 20px;
+
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==================== KEYFRAMES ==================== */
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes badge-pop {
+  0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+  70%  { transform: scale(1.15) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes pulse-orange {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(255,69,0,0.5); }
+  50%       { box-shadow: 0 0 0 14px rgba(255,69,0,0); }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(255,184,0,0.5); }
+  50%       { box-shadow: 0 0 0 14px rgba(255,184,0,0); }
+}
+
+@keyframes fire-flicker {
+  0%, 100% { transform: scaleY(1)    rotate(-1deg); }
+  33%       { transform: scaleY(1.07) rotate(1deg); }
+  66%       { transform: scaleY(0.95) rotate(-0.5deg); }
+}
+
+@keyframes confetti-fall {
+  0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes intensity-fill {
+  from { width: 0%; }
+  to   { width: var(--fill-pct, 50%); }
+}
+
+@keyframes number-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); color: var(--orange); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shimmer-gold {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pr-slam {
+  0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.1) rotate(2deg);  opacity: 1; }
+  80%  { transform: scale(0.97) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes streak-pulse {
+  0%, 100% { text-shadow: 0 0 10px #FF4500, 0 0 20px #FF4500; }
+  50%       { text-shadow: 0 0 5px #FF4500; }
+}
+
+/* ==================== BASE ==================== */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body { min-height: 100vh; background: var(--bg); }
+
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
+
+/* ==================== LAYOUT ==================== */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 68px;
+  min-height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
+  gap: 4px;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+}
+
+.page-content {
+  margin-left: 68px;
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* ==================== TYPOGRAPHY ==================== */
+
+.display { font-family: var(--font-display); letter-spacing: 0.02em; }
+.label {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ==================== CARDS ==================== */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  transition: background 0.2s, border-color 0.2s, transform 0.25s var(--ease-spring), box-shadow 0.25s;
+}
+
+.card:hover {
+  background: var(--card-hover);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.card-orange {
+  border-left: 3px solid var(--orange);
+}
+
+.card-gold {
+  border-left: 3px solid var(--gold);
+  background: linear-gradient(135deg, rgba(255,184,0,0.06) 0%, var(--card) 60%);
+}
+
+/* ==================== BUTTONS ==================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-spring);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.btn-primary {
+  background: var(--orange);
+  color: #fff;
+  padding: 12px 28px;
+  font-size: 0.88rem;
+  box-shadow: 0 4px 20px rgba(255,69,0,0.35);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--orange-light);
+  box-shadow: var(--orange-glow);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.07);
+  color: var(--text-dim);
+  border: 1px solid var(--card-border);
+  padding: 11px 24px;
+  font-size: 0.85rem;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255,255,255,0.12);
+  color: var(--text);
+}
+
+.btn-danger {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(255,45,85,0.25);
+  padding: 7px 16px;
+  font-size: 0.75rem;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: rgba(255,45,85,0.22);
+  box-shadow: 0 0 15px rgba(255,45,85,0.3);
+}
+
+.btn-lg {
+  padding: 16px 40px;
+  font-size: 1rem;
+  border-radius: var(--radius);
+}
+
+.btn-icon {
+  width: 36px; height: 36px;
+  padding: 0;
+  border-radius: 8px;
+}
+
+/* ==================== FORM ELEMENTS ==================== */
+
+.input {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 11px 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.input:focus {
+  border-color: var(--orange);
+  background: rgba(255,69,0,0.04);
+  box-shadow: 0 0 0 3px rgba(255,69,0,0.12);
+}
+
+.input::placeholder { color: var(--text-faint); }
+
+.field-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* ==================== BADGES ==================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badge-orange { background: var(--orange-dim); color: var(--orange); }
+.badge-gold   { background: var(--gold-dim);   color: var(--gold); }
+.badge-green  { background: var(--green-dim);  color: var(--green); }
+.badge-blue   { background: var(--blue-dim);   color: var(--blue); }
+.badge-red    { background: var(--red-dim);    color: var(--red); }
+.badge-purple { background: var(--purple-dim); color: var(--purple); }
+
+/* ==================== STAT GRID ==================== */
+
+.stats-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.stats-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+/* ==================== PAGE HEADER ==================== */
+
+.page-header {
+  padding: 20px 32px 0;
+  margin-bottom: 28px;
+}
+
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.page-header .subtitle {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* ==================== DIVIDER ==================== */
+
+.divider {
+  height: 1px;
+  background: var(--card-border);
+  margin: 24px 0;
+}
+
+/* ==================== MUSCLE GROUP BADGE ==================== */
+
+.muscle-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+/* ==================== INTENSITY BAR ==================== */
+
+.intensity-bar-track {
+  height: 5px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.intensity-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  animation: intensity-fill 0.8s var(--ease-out) forwards;
+}
+
+/* ==================== WORKOUT GRID ==================== */
+
+.workout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* ==================== FAB ==================== */
+
+.fab {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
+  font-size: 1.6rem;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 6px 24px rgba(255,69,0,0.5);
+  z-index: 200;
+  transition: all 0.25s var(--ease-spring);
+  animation: pulse-orange 3s ease-in-out infinite;
+}
+
+.fab:hover {
+  transform: scale(1.12) rotate(90deg);
+  box-shadow: var(--orange-glow), 0 8px 32px rgba(255,69,0,0.5);
+}
+
+/* ==================== EMPTY STATE ==================== */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  text-align: center;
+  gap: 16px;
+}
+
+/* ==================== PR BANNER ==================== */
+
+.pr-banner {
+  background: linear-gradient(135deg, rgba(255,184,0,0.15), rgba(255,69,0,0.1));
+  border: 1px solid rgba(255,184,0,0.35);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: pr-slam 0.5s var(--ease-spring) both;
+}
+
+/* ==================== TOAST ==================== */
+
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 340px;
+}
+
+/* ==================== MARQUEE ==================== */
+
+.marquee-outer { overflow: hidden; white-space: nowrap; }
+.marquee-inner { display: inline-block; animation: marquee 24s linear infinite; }
+
+/* ==================== SECTION LABEL ==================== */
+
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--card-border);
+}
+
+/* ==================== LEVEL CHIP ==================== */
+
+.level-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--gold-dim), rgba(255,69,0,0.1));
+  border: 1px solid rgba(255,184,0,0.3);
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+/* ==================== PROGRESS RING CONTAINER ==================== */
+
+.progress-ring-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==================== NAV ITEM ==================== */
+
+.nav-item {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 1.2rem;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.06); color: var(--text-dim); }
+
+.nav-item.active {
+  background: var(--orange-dim);
+  color: var(--orange);
+}
+
+.nav-item .nav-label {
+  font-size: 0.44rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nav-active-bar {
+  position: absolute;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 22px;
+  background: var(--orange);
+  border-radius: 2px 0 0 2px;
+  box-shadow: 0 0 8px rgba(255,69,0,0.6);
+}
+
+/* ==================== COACH QUOTE ==================== */
+
+.coach-quote {
+  background: linear-gradient(135deg, rgba(255,69,0,0.08), rgba(255,184,0,0.05));
+  border-left: 3px solid var(--orange);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* ==================== LIVE STAT ==================== */
+
+.live-stat {
+  text-align: center;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border);
+}
+
+.live-stat .val {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.live-stat .lab {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
