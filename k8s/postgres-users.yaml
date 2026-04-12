@@ -1,0 +1,73 @@
+# PersistentVolumeClaim: reserverer diskplads til databasen
+# Uden dette mister du data når postgres-poden genstarter
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-users-pvc
+  namespace: fittrack
+spec:
+  accessModes:
+    - ReadWriteOnce        # kun én pod kan skrive ad gangen
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+# Deployment: beskriver hvilken container der skal køre, og hvor mange kopier
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-users
+  namespace: fittrack
+spec:
+  replicas: 1              # databaser kører typisk med 1 replika (ellers skal man bruge StatefulSet)
+  selector:
+    matchLabels:
+      app: postgres-users  # Kubernetes bruger labels til at finde de rigtige pods
+  template:
+    metadata:
+      labels:
+        app: postgres-users
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+            - name: POSTGRES_DB
+              value: users
+          volumeMounts:
+            - name: postgres-users-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-users-storage
+          persistentVolumeClaim:
+            claimName: postgres-users-pvc
+
+---
+# Service: giver postgres-users et stabilt DNS-navn inden i clusteret
+# Andre pods kan nå den via: postgres-users.fittrack.svc.cluster.local:5432
+# eller bare: postgres-users:5432 (inden for samme namespace)
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-users
+  namespace: fittrack
+spec:
+  selector:
+    app: postgres-users
+  ports:
+    - port: 5432
+      targetPort: 5432
+  type: ClusterIP            # kun tilgængelig inden i clusteret

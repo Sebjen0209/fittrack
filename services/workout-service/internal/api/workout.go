@@ -19,6 +19,8 @@ func NewApiHandler(dbStore db.WorkoutStore) *ApiHandler {
 }
 
 func (h *ApiHandler) RegisterRoutes(r *gin.Engine) {
+	r.GET("/health", h.Health)
+
 	api := r.Group("/api")
 	{
 		api.POST("/workouts", h.CreateWorkout)
@@ -26,6 +28,10 @@ func (h *ApiHandler) RegisterRoutes(r *gin.Engine) {
 		api.GET("/workouts/user/:user_id", h.GetWorkoutsByUser)
 		api.DELETE("/workouts/:id", h.DeleteWorkout)
 	}
+}
+
+func (h *ApiHandler) Health(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
 
 func (h *ApiHandler) CreateWorkout(c *gin.Context) {
