@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: workout-service
-          image: fittrack/workout-service:latest
-          imagePullPolicy: Never
+          image: ghcr.io/sebjen0209/fittrack-workout-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8081
           env:

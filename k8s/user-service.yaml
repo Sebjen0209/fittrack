@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: fittrack/user-service:latest   # skal bygges og pushes til et registry
-          imagePullPolicy: Never
+          image: ghcr.io/sebjen0209/fittrack-user-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
@@ -53,3 +53,4 @@ spec:
     - port: 8080
       targetPort: 8080
   type: ClusterIP
+
