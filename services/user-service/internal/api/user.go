@@ -19,6 +19,8 @@ func NewApiHandler(dbStore db.UserStore) *ApiHandler {
 }
 
 func (h *ApiHandler) RegisterRoutes(r *gin.Engine) {
+	r.GET("/health", h.Health)
+
 	api := r.Group("/api")
 	{
 		api.GET("/users/:id", h.GetUser)
@@ -26,6 +28,10 @@ func (h *ApiHandler) RegisterRoutes(r *gin.Engine) {
 		api.PUT("/users/:id", h.UpdateUser)
 		api.DELETE("/users/:id", h.DeleteUser)
 	}
+}
+
+func (h *ApiHandler) Health(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
 
 func (h *ApiHandler) GetUser(c *gin.Context) {

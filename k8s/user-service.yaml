@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: fittrack
+spec:
+  replicas: 2              # Kubernetes styrke: nem skalering — bare skift dette tal
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: ghcr.io/sebjen0209/fittrack-user-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_CONN
+              value: postgres://fittrack:fittrack@postgres-users:5432/users?sslmode=disable
+          # readinessProbe: Kubernetes checker om poden er klar til at modtage trafik
+          # Uden denne kan du sende requests til en pod der ikke er startet endnu
+          readinessProbe:
+            httpGet:
+              path: /health   # din service skal have et health endpoint
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          # livenessProbe: genstarter poden hvis den hænger
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+
+---
+# Service med NodePort: tilgængelig udefra via <node-ip>:30080
+# Til produktion ville man bruge type: LoadBalancer eller en Ingress
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: fittrack
+spec:
+  selector:
+    app: user-service
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP
+

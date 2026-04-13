@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(npm install:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(kubectl config:*)",
+      "Bash(kubectl version:*)",
+      "Bash(where kind:*)",
+      "Bash(winget list:*)"
     ]
   }
 }
