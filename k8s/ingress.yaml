@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fittrack-ingress
+  namespace: fittrack
+  annotations:
+    # Fortæller Kubernetes at det er nginx-ingress controlleren der håndterer denne
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          # /api/users/123  →  videresendes til user-service som /api/users/123
+          - path: /api/users(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: 8080
+
+          # /api/workouts/123  →  videresendes til workout-service som /api/workouts/123
+          - path: /api/workouts(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: workout-service
+                port:
+                  number: 8081

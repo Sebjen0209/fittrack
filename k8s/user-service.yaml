@@ -50,7 +50,6 @@ spec:
   selector:
     app: user-service
   ports:
-    - port: 8080          # port inden i clusteret
-      targetPort: 8080    # port på poden
-      nodePort: 30080     # ekstern port (30000-32767)
-  type: NodePort
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP
